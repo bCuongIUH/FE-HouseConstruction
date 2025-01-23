@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Inter', sans-serif;
+  }
+
+  body {
+    @apply text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-purple-600 text-white px-8 py-3 rounded-full inline-flex items-center space-x-2 hover:bg-purple-700 transition-all duration-300 hover:scale-105 active:scale-95;
+  }
+
+  .section-title {
+    @apply text-4xl font-bold mb-4;
+  }
+
+  .section-subtitle {
+    @apply text-gray-600 mb-16;
+  }
+
+  .card {
+    @apply bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300;
+  }
+}
+
+/* Loading animation */
+.loading-dots div {
+  animation: loading 1.4s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+
+.loading-dots div:nth-child(1) {
+  animation-delay: -0.30s;
+}
+
+.loading-dots div:nth-child(2) {
+  animation-delay: -0.15s;
+}
+
+@keyframes loading {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-purple-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-purple-700;
+}
+
+/* Focus styles */
+:focus-visible {
+  @apply outline-none ring-2 ring-purple-600 ring-offset-2;
+}
