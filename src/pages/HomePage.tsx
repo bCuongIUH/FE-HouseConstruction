@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
-import { SearchOutlined, UserOutlined, MenuOutlined } from '@ant-design/icons';
+import React, { useState, useRef, useEffect } from 'react';
+import { SearchOutlined, UserOutlined, MenuOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 const HomePage = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isAuthOpen, setIsAuthOpen] = useState(false);
+    const [serviceIndex, setServiceIndex] = useState(0);
+    const projectsRef = useRef(null);
+    const [isHoveringProjects, setIsHoveringProjects] = useState(false);
+    const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 0)
 
     const services = [
         { title: 'Thiết kế nội thất', image: 'https://hcmcc.edu.vn//upload/images/phong%20khach.jpg' },
         { title: 'Thiết kế kiến trúc', image: 'https://eaut.edu.vn/wp-content/uploads/2020/12/ky-thuat-xay-dung1.jpg' },
         { title: 'Thi công nội thất', image: 'https://www.lanha.vn/wp-content/uploads/2023/08/thi-cong-noi-that-hcm-7.jpeg.webp' },
-        { title: 'Thi công xây dựng', image: 'https://phuonghoang.asia/wp-content/uploads/2021/10/thi-cong-cong-trinh-phg-2.jpg' }
+        { title: 'Thi công xây dựng', image: 'https://phuonghoang.asia/wp-content/uploads/2021/10/thi-cong-cong-trinh-phg-2.jpg' },
+        { title: 'Thiết kế sân vườn', image: 'https://thietkesanvuondn.vn/wp-content/uploads/2020/11/sv8.jpg' },
+        { title: 'Thiết kế nhà thông minh', image: 'https://trongoixaynha.com/wp-content/uploads/2021/11/thiet-ke-nha-thong-minh-4-1.jpg' },
     ];
 
     const projects = [
@@ -18,7 +24,31 @@ const HomePage = () => {
         { image: 'https://homestay.review/wp-content/uploads/2020/11/19-11563.jpg' },
         { image: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/531232385.jpg?k=3b6c3d8ebe64354aa2711eafc5366ca8cc67193d3749dd2bb5a90b45858fbf25&o=&hp=1' }
     ];
+    const nextService = () => {
+        if (serviceIndex + 4 < services.length) {
+            setServiceIndex(prev => prev + 1);
+        }
+    };
 
+    const prevService = () => {
+        if (serviceIndex > 0) {
+            setServiceIndex(prev => prev - 1);
+        }
+    };
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth)
+        }
+
+        window.addEventListener("resize", handleResize)
+
+        return () => {
+            window.removeEventListener("resize", handleResize)
+        }
+    }, [])
+
+    const visibleServices = services.slice(serviceIndex, serviceIndex + 4)
+    const showNavigationButtons = services.length > 4
     return (
         <div className="min-h-screen bg-white">
             {/* Header */}
@@ -95,31 +125,54 @@ const HomePage = () => {
                     </div>
                 </div>
             </section>
-
-            {/* Services Section */}
+            {/* dich vu cua CD */}
             <section className="py-16 bg-gray-50">
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold mb-8">DỊCH VỤ CỦA CD HOME</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {services.map((service, index) => (
-                            <div key={index} className="relative group overflow-hidden rounded-lg">
-                                <img
-                                    src={service.image || "/placeholder.svg"}
-                                    alt={service.title}
-                                    className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
-                                />
-                                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                    <h3 className="text-white text-xl font-semibold text-center px-4">{service.title}</h3>
-                                </div>
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <h3 className="text-white text-xl font-semibold text-center px-4 z-10">{service.title}</h3>
-                                </div>
+                    <div className="relative">
+                        <div className="overflow-hidden">
+                            <div
+                                className="flex transition-transform duration-300 ease-in-out"
+                                style={{ transform: `translateX(-${serviceIndex * 25}%)` }}
+                            >
+                                {services.map((service, index) => (
+                                    <div key={index} className="w-full md:w-1/2 lg:w-1/4 flex-shrink-0 px-4">
+                                        <div className="relative group overflow-hidden rounded-lg">
+                                            <img
+                                                src={service.image || "/placeholder.svg"}
+                                                alt={service.title}
+                                                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                                            />
+                                            <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                                <h3 className="text-white text-xl font-semibold text-center px-4">{service.title}</h3>
+                                            </div>
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <h3 className="text-white text-xl font-semibold text-center px-4 z-10">{service.title}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        </div>
+                        {showNavigationButtons && (
+                            <>
+                                <button
+                                    onClick={prevService}
+                                    className={`absolute left-[-30px] top-1/2 -translate-y-1/2 bg-black text-white p-4 rounded-full shadow-lg opacity-20 hover:opacity-100 transition-opacity duration-300 ${serviceIndex === 0 ? "invisible" : ""}`}
+                                >
+                                    <LeftOutlined className="w-6 h-6" />
+                                </button>
+                                <button
+                                    onClick={nextService}
+                                    className={`absolute right-[-30px] top-1/2 -translate-y-1/2 bg-black text-white p-4 rounded-full shadow-lg opacity-20 hover:opacity-100 transition-opacity duration-300 ${serviceIndex + 4 >= services.length ? "invisible" : ""}`}
+                                >
+                                    <RightOutlined className="w-6 h-6" />
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
             </section>
-
             {/* Projects Section */}
             <section className="py-16">
                 <div className="container mx-auto px-4">
@@ -265,7 +318,7 @@ const HomePage = () => {
                                 </div>
                                 <div className="p-4">
                                     <h3 className="text-lg font-semibold mb-2 group-hover:text-red-600">
-                                    Check-in 3 điểm 'trốn nóng' mới nổi ở Khánh Hòa
+                                        Check-in 3 điểm 'trốn nóng' mới nổi ở Khánh Hòa
                                     </h3>
                                     {/* <p className="text-gray-600 line-clamp-2">
                                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
